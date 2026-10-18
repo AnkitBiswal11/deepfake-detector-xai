@@ -1,26 +1,20 @@
-# PyDeepFakeDet
+# DeepFake Detector XAI
 
 <p align="center">
- <img width="90%" src="./demo/logo.png" />
+  <img width="85%" src="./demo/logo.png" />
 </p>
 
 <p align="center">
-  <p align="center">
-    <i> An integrated and scalable library for Deepfake detection research.</i>
-  </p>
- </p>
+  <i>An explainable deepfake detection and facial artifact forensics pipeline with PyTorch and Grad-CAM.</i>
+</p>
 
 ## Introduction
 
-PyDeepFakeDet is an integrated and scalable Deepfake detection tool developed by [Fudan Vision and Learning Lab](https://fvl.fudan.edu.cn/). The goal is to provide state-of-the-art Deepfake detection Models as well as interfaces for the training and evaluation of new Models on commonly used Deepfake datasets.
+This repository provides an integrated deep learning framework for facial manipulation detection, feature visualization, and model interpretability. While standard classifiers operate as black boxes, this project pairs high-performing CNN and Transformer backbones with **layer-wise Grad-CAM (Gradient-weighted Class Activation Mapping)** to visualize internal convolutional feature activations—highlighting blending seams, boundary warping, and frequency artifacts in real time.
 
-<p align="center">
- <img width="80%" src="./demo/demo.gif" />
-</p>
+The core architectures and dataset configurations are adapted and extended from research by [Fudan Vision and Learning Lab](https://fvl.fudan.edu.cn/):
 
-This repository includes implementations of both CNN-based and Transformer-based methods:
-
-- CNN Models
+- **CNN Models:**
   - [ResNet](https://arxiv.org/abs/1512.03385)
   - [Xception](https://arxiv.org/abs/1610.02357)
   - [EfficientNet](https://arxiv.org/abs/1905.11946)
@@ -29,15 +23,30 @@ This repository includes implementations of both CNN-based and Transformer-based
   - [Thinking in Frequency: Face Forgery Detection by Mining Frequency-aware Clues](https://arxiv.org/abs/2007.09355)
   - [Multi-attentional Deepfake Detection](https://arxiv.org/abs/2103.02406)
 
-- Transformer Models
+- **Transformer Models:**
   - [ViT](https://arxiv.org/abs/2010.11929)
   - [M2TR: Multi-modal Multi-scale Transformers for Deepfake Detection](https://arxiv.org/abs/2104.09770)
 
+---
+
+## Explainable AI (Grad-CAM) Visual Forensics
+
+By hooking into the final convolutional residual block (`net.0.layer4`), the framework computes activation gradients to pinpoint where the model detects synthesis anomalies:
+
+<p align="center">
+  <img width="70%" src="./demo/gradcam_output.jpg" alt="Grad-CAM Output" />
+</p>
+
+- **Red / Yellow Regions:** High gradient activation (regions driving the "Fake / Manipulated" decision, such as facial blending borders and mouth boundaries).
+- **Blue / Cyan Regions:** Low-importance background context features suppressed during inference.
+
+---
+
 ## Model Zoo and Baselines
 
-The baseline Models on three versions of [FF-DF](https://github.com/ondyari/FaceForensics) dataset are provided.
+### FaceForensics++ (FF-DF) Dataset AUC
 
-| Method          | RAW   | C23   | C40   | Model                                                                                                                                                                                                                                                                             |
+| Method          | RAW   | C23   | C40   | Model Weights Checkpoint                                                                                                                                                                                                                                                          |
 | --------------- | ----- | ----- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ResNet50        | 97.61 | 94.87 | 84.95 | [RAW](https://drive.google.com/file/d/1OPb5wQditLd2dd9O4Lx3uLEfei1e6WUt/view?usp=sharing) / [C23](https://drive.google.com/file/d/186i-BiOfl_-JPkTESROJ-035Tsl75P__/view?usp=sharing) / [C40](https://drive.google.com/file/d/1HmBu1UDVP-YK8mMXdcVUFWmmXaQ9k3Ts/view?usp=sharing) |
 | Xception        | 97.84 | 95.24 | 86.27 | [RAW](https://drive.google.com/file/d/15FJreogGs70SIyJSIiNrAICJyHOHGOcp/view?usp=sharing) / [C23](https://drive.google.com/file/d/1tNvZ4DqLiDjL_C2YV89ZDPZhjvOSunnR/view?usp=sharing) / [C40](https://drive.google.com/file/d/1f9STu_JWCh9HIVJ_6iCnjE3h5W0V2Lbh/view?usp=sharing) |
@@ -50,9 +59,9 @@ The baseline Models on three versions of [FF-DF](https://github.com/ondyari/Face
 | ViT             | 96.72 | 93.45 | 82.97 | [RAW](https://drive.google.com/file/d/1fA6yYfC2fggpGujLNIUZoooFGW8f8Ima/view?usp=sharing) / [C23](https://drive.google.com/file/d/1kcKeSoTD1s0EWs0yqvkojNBR4lRR7Jdh/view?usp=sharing) / [C40](https://drive.google.com/file/d/1X_esyW89arAdXmNVQBtUn215LYXjsho0/view?usp=sharing) |
 | M2TR            | 99.50 | 97.93 | 92.89 | [RAW](https://drive.google.com/file/d/1_HaPE6r7Zzof2mmLmmc4fbIbqyWs17S0/view?usp=sharing) / [C23](https://drive.google.com/file/d/1XRIllA6p5YnITztl1burwcr5l7LAcpqv/view?usp=sharing) / [C40](https://drive.google.com/file/d/1xhclIjoh8GkVvoVefjDY-itdaV0VaMxY/view?usp=sharing) |
 
-The baseline Models on [Celeb-DF](https://github.com/yuezunli/celeb-deepfakeforensics) is also available.
+### Celeb-DF Dataset AUC
 
-| Method          | Celeb-DF | Model                                                                                         |
+| Method          | Celeb-DF | Model Checkpoint                                                                              |
 | --------------- | -------- | --------------------------------------------------------------------------------------------- |
 | ResNet50        | 98.51    | [CelebDF](https://drive.google.com/file/d/1dcek81dAiSx6iJMYazncdrX-6cYBVYww/view?usp=sharing) |
 | Xception        | 99.05    | [CelebDF](https://drive.google.com/file/d/19OL8lNeyFE3-23WX9JN9FPBbGK1ML_Z2/view?usp=sharing) |
@@ -65,36 +74,53 @@ The baseline Models on [Celeb-DF](https://github.com/yuezunli/celeb-deepfakefore
 | ViT             | 96.73    | [CelebDF](https://drive.google.com/file/d/1gzh9WlUE50sQ3meVAiagujADi6VR4t5F/view?usp=sharing) |
 | M2TR            | 99.76    | [CelebDF](https://drive.google.com/file/d/19mPqJ1DzkPr89VHVjHD2b0dqiZjufZnG/view?usp=sharing) |
 
-## Installation
+---
 
-- We use Python == 3.9.0, torch==1.11.0, torchvision==1.12.0.
-- Install the required packages by:
+## Installation & Setup
 
-  `pip install -r requirements.txt`
+Environment specifications: Python 3.9 on Windows/Linux with NVIDIA CUDA acceleration.
 
-## Data Preparation
+```powershell
+# 1. Install PyTorch with CUDA 11.3 support
+pip install --no-deps torch==1.11.0+cu113 torchvision==0.12.0+cu113 -f [https://download.pytorch.org/whl/cu113/torch_stable.html](https://download.pytorch.org/whl/cu113/torch_stable.html)
 
-Please follow the instructions in [DATASET.md](./DATASET.md) to prepare the data.
+# 2. Install pinned dependencies (avoids NumPy 2.x and OpenCV conflicts)
+pip install "numpy==1.23.5" "opencv-python<4.9.0" "opencv-python-headless<4.9.0" matplotlib "kornia==0.6.4" timm==0.5.4 fvcore yacs gdown
+Quick Start: Single-Image Inference & Grad-CAM\
 
-## Quick Start
+1. Download Checkpoint Weights
+Download the pre-trained ResNet-50 weights fine-tuned on the FaceForensics++ C23 benchmark:
+gdown "[https://drive.google.com/uc?id=186i-BiOfl_-JPkTESROJ-035Tsl75P](https://drive.google.com/uc?id=186i-BiOfl_-JPkTESROJ-035Tsl75P)__" -O resnet50_c23.pyth
 
-Specify the path of your local dataset in `./configs/resnet50.yaml`, and then run:
+2. Run Inference and Generate Heatmap
+Target the final residual convolutional block (net.0.layer4) to compute class activations:
+$env:PYTHONPATH = "."
+python visualization/gradcam.py --model ResNet50 --layer net.0.layer4 --pth resnet50_c23.pyth --img demo/manipulated_face.jpg --save_path demo/gradcam_output.jpg
 
-```
+Output:
 python run.py --cfg resnet50.yaml
-```
 
-## Visualization tools
-
-Please refer to [VISUALIZE.md](./VISUALIZE.md) for detailed instructions.
-
-## Citations
-
-```bibtex
+Citations
 @inproceedings{wang2021m2tr,
   title={M2TR: Multi-modal Multi-scale Transformers for Deepfake Detection},
   author={Wang, Junke and Wu, Zuxuan and Ouyang, Wenhao and Han, Xintong and Chen, Jingjing and Lim, Ser-Nam and Jiang, Yu-Gang},
   booktitle={ICMR},
   year={2022}
 }
-```
+
+@article{selvaraju2017gradcam,
+  title={Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization},
+  author={Selvaraju, Ramprasaath R and Cogswell, Michael and Das, Abhishek and Vedaldi, Andrea and Parikh, Devi and Batra, Dhruv},
+  journal={ICCV},
+  year={2017}
+}
+
+---
+
+### What to Do Next
+
+1. In VS Code, open `README.md`.
+2. Press `Ctrl + A`, paste the markdown block above, and save with `Ctrl + S`.
+3. Check `git status` in your terminal to verify that only `README.md` and your updated scripts are modified.
+
+<FollowUp label="Would you like to stage and commit this updated README to Git?" query="Show me the Git commands to commit this updated README.md and push it to GitHub."/>
