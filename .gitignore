@@ -1,0 +1,28 @@
+# Python virtual environment
+venv/
+env/
+ENV/
+*.pyc
+__pycache__/
+
+# Checkpoints and large model weight files (>100MB)
+*.pyth
+*.pth
+*.pt
+*.bin
+*.onnx
+
+# Cache directories
+.cache/
+.pytest_cache/
+
+# Demo generated outputs (keep samples, ignore generated heatmaps)
+demo/gradcam_output.jpg
+demo/output_heatmap.jpg
+demo/test_gradcam.jpg
+
+# VS Code / OS settings
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
